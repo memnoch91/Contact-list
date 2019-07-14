@@ -9,6 +9,8 @@
 </template>
 
 <style lang="scss">
+@import "./node_modules/bulma/bulma.sass";
+
 * {
   box-sizing: border-box;
 }
