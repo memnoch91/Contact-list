@@ -1,40 +1,45 @@
 <template>
-  <section>
+  <section class="m-b-lg">
     <h1>{{title}}</h1>
-    <table
-      v-if="contactsData && contactsData.length"
-      class="contacts-table table is-bordered is-narrow"
-    >
-      <thead class="contacts-table__header">
-        <tr>
-          <th>Picture</th>
-          <th>Name</th>
-          <th>Actions</th>
-        </tr>
-      </thead>
-      <tbody class="contacts-table__body">
-        <tr v-for="contact in contactsData" :key="contact.id">
-          <td>
-            <figure class="image">
-              <img :src="contact.picUrl" alt="user pic" />
+    <div class="container contacts-list">
+      <div class="columns is-multiline is-marginless">
+        <div v-for="index in 7" :key="index" class="column is-half card-wrapper">
+          <article class="media contact-card p-md">
+            <figure class="media-left image is-64x64">
+              <img
+                src="https://i.imgur.com/ellhozl.jpg"
+                alt="contact-image"
+                class="is-rounded is-64x64 contact-image"
+              />
             </figure>
-          </td>
-          <td>{{contact.name}}</td>
-          <td class="has-text-right">
-            <button class="button" @click="deleteItem(contact.id)">X</button>
-          </td>
-        </tr>
-      </tbody>
-    </table>
+            <div class="media-content credentials">
+              <div class="name">
+                <p>andrei tosa</p>
+              </div>
+              <div class="contact-details">
+                <span>number | </span>
+                <span>email | </span>
+                <span>city</span>
+              </div>
+            </div>
+          </article>
+        </div>
+      </div>
+    </div>
   </section>
 </template>
 <script>
 import contacts from "../data/contacts";
+import { DB } from "../services/firebase";
 
 export default {
   name: "ContactList",
+  firestore: {
+    firebaseDB: DB.collection("contact-list")
+  },
   data() {
     return {
+      firebaseDB: [],
       title: "Contact List",
       contactsData: contacts
     };
@@ -45,25 +50,33 @@ export default {
         contact => contact.id !== id
       );
     }
+  },
+  mounted() {
+    console.log(DB.collection("contact-list"));
   }
 };
 </script>
 <style lang="scss" scoped>
-.contacts-table {
-  margin: 0 auto;
-  width: 80%;
-  // display: block;
-  // border: 1px solid darkblue;
-  border-collapse: collapse;
-  td {
-    vertical-align: middle;
-  }
-  &__body {
-    img {
-      display: inline-block;
-      height: 70px;
-      width: auto;
+.contacts-list {
+  max-width: 90%;
+  border: 1px solid turquoise;
+  height: 100%;
+  .card-wrapper {
+    display: flex;
+    align-items: center;
+    .contact-card {
+      height: 100px;
+      border: 1px solid lightgreen;
+      background-color: #34495e;
+      flex-basis: 100%;
+      figure {
+        img {
+          display: block;
+          max-height: 100%;
+        }
+      }
     }
+    height: 150px;
   }
 }
 </style>
