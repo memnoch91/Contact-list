@@ -2,7 +2,8 @@
   <div id="app" class="app-wrapper">
     <div class="app-wrapper__container">
       <div id="nav">
-        <router-link to="/">Contacts</router-link>|
+        <router-link to="/">Contacts</router-link>
+        <span> | </span>
         <router-link to="/add-contact">Add Contact</router-link>
       </div>
       <router-view class="app-wrapper__body" />

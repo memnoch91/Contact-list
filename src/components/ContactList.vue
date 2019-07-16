@@ -1,82 +1,108 @@
 <template>
   <section class="m-b-lg">
-    <h1>{{title}}</h1>
-    <div class="container contacts-list">
+    <div class="contacts-list container">
       <div class="columns is-multiline is-marginless">
-        <div v-for="index in 7" :key="index" class="column is-half card-wrapper">
-          <article class="media contact-card p-md">
-            <figure class="media-left image is-64x64">
-              <img
-                src="https://i.imgur.com/ellhozl.jpg"
-                alt="contact-image"
-                class="is-rounded is-64x64 contact-image"
-              />
-            </figure>
-            <div class="media-content credentials">
-              <div class="name">
-                <p>andrei tosa</p>
-              </div>
-              <div class="contact-details">
-                <span>number | </span>
-                <span>email | </span>
-                <span>city</span>
-              </div>
-            </div>
-          </article>
+        <div class="c-c-c column is-full">
+          <h1 class="list-title title">{{title}}</h1>
         </div>
+        <div class="c-c-c column is-full">
+          <input
+            type="text"
+            class="findContacts input m-t-sm m-b sm"
+            id="searchContacts"
+            placeholder="Search contacts..."
+            v-model="searchInput"
+          />
+        </div>
+        <ContactCard
+          v-for="(cardData, index) in filteredContacts"
+          :cardId="cardData.id"
+          :key="cardData.id"
+          :order="index"
+          :card="cardData"
+          @deleteMe="deleteCard"
+          @openCardDetails="openCardDetails"
+        />
+        <NoContacts v-if="noContactFound" key="NoContacts">No contact matching "{{searchInput}}"</NoContacts>
       </div>
     </div>
+    <Modal ref="modal" />
   </section>
 </template>
 <script>
-import contacts from "../data/contacts";
 import { DB } from "../services/firebase";
-
+import ContactCard from "./ContactCard";
+import Modal from "./Modal";
+import NoContacts from "./NoContacts";
 export default {
   name: "ContactList",
   firestore: {
     firebaseDB: DB.collection("contact-list")
   },
+  components: {
+    ContactCard,
+    Modal,
+    NoContacts
+  },
   data() {
     return {
       firebaseDB: [],
       title: "Contact List",
-      contactsData: contacts
+      searchInput: ""
     };
   },
   methods: {
-    deleteItem(id) {
-      this.contactsData = this.contactsData.filter(
-        contact => contact.id !== id
-      );
+    deleteCard(id) {
+      DB.collection("contact-list")
+        .doc(id)
+        .delete();
+    },
+    openCardDetails(id) {
+      this.$refs.modal.openModal();
+      console.log(this.$refs);
     }
   },
-  mounted() {
-    console.log(DB.collection("contact-list"));
+  computed: {
+    filteredContacts() {
+      let requestedContact = this.searchInput;
+      if (!requestedContact) {
+        return this.firebaseDB;
+      }
+      return this.firebaseDB.filter(contact => {
+        return contact.name
+          .toLowerCase()
+          .includes(requestedContact.toLowerCase());
+      });
+    },
+    noContactFound() {
+      return this.filteredContacts.length === 0 && this.searchInput;
+    }
   }
 };
 </script>
 <style lang="scss" scoped>
+/** 
+delete { check }
+update,
+modal details & update  when you click on the details they become updatebale
+filter, { check }
+shadows on cards { check }
+*/
 .contacts-list {
+  .list-title {
+    color: #f4a261;
+  }
   max-width: 90%;
-  border: 1px solid turquoise;
   height: 100%;
-  .card-wrapper {
+  .c-c-c { //column-center-content
     display: flex;
-    align-items: center;
-    .contact-card {
-      height: 100px;
-      border: 1px solid lightgreen;
-      background-color: #34495e;
-      flex-basis: 100%;
-      figure {
-        img {
-          display: block;
-          max-height: 100%;
-        }
-      }
+    justify-content: center;
+    input::placeholder {
+      color: #414073;
     }
-    height: 150px;
+    .findContacts {
+      max-width: 66%;
+    }
   }
 }
 </style>
