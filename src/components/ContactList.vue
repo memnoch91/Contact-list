@@ -57,7 +57,7 @@ export default {
         .doc(id)
         .delete();
     },
-    openCardDetails(id) {
+    openCardDetails() {
       this.$refs.modal.openModal();
       console.log(this.$refs);
     }
