@@ -9,7 +9,7 @@
     <div class="modal-background" @click="closeModal"></div>
     <div class="modal-content">
       <ul class="columns is-multiline is-marginless">
-        <div class="column is-full flex-row-justify-center">
+        <li class="column is-full flex-row-justify-center">
           <figure class="image is-128x128">
             <img
               class="is-rounded is-128x128 contact-image"
@@ -17,13 +17,20 @@
               :alt="currentCard[0].name"
             />
           </figure>
-        </div>
+        </li>
         <li
           class="column is-half-desktop is-full-tablet is-full-mobile"
           v-for="(value, name, index) in displayObjectFilter"
           :key="index"
         >
-          <BaseInput :dbValue="value" :valueKey="name" />
+          <BaseInput :dbValue="value" :valueKey="name" @newContactData="receiveNewContactData" />
+        </li>
+        <li class="column is-full flex-row-justify-center">
+          <button
+            class="button is-primary is-normal"
+            :disabled="canSave"
+            @click.prevent="updateModal"
+          >Save</button>
         </li>
       </ul>
     </div>
@@ -31,7 +38,7 @@
   </div>
 </template>
 <script>
-// import { DB } from "../services/firebase";
+import { DB } from "../services/firebase";
 import BaseInput from "./base-components/BaseInput";
 // import BaseInfoDisplay from "./base-components/BaseInfoDisplay";
 import { undefinedUser } from "@/services/defaultValues";
@@ -52,7 +59,8 @@ export default {
   data() {
     return {
       isOpen: false,
-      isEditable: false
+      editedContact: "",
+      infoMessage: ""
     };
   },
 
@@ -62,17 +70,31 @@ export default {
     },
     closeModal() {
       this.isOpen = false;
-      this.isEditable = false;
+      this.editedContact = "";
     },
-    toggleEditable(payload) {
-      //payload Bollean value true
-      this.isEditable = payload;
+    receiveNewContactData(payload) {
+      const existingContact = { ...this.currentCard[0] };
+      const editedField = payload.changedField;
+      const editedValue = payload.newValue;
+      existingContact[editedField] = editedValue;
+      this.editedContact = existingContact;
+    },
+    updateModal() {
+      const displayedContactId = this.currentCard[1];
+      DB.collection("contact-list")
+        .doc(displayedContactId)
+        .set(this.editedContact)
+        .then( res =>  {
+          this.infoMessage = "Contact updated";
+          console.log(res)
+        })
+        .catch(err => {
+          this.infoMessage = "Error while updating contact please try again";
+          console.error(err)
+        })
     }
   },
   computed: {
-    contactFieldState() {
-      return this.isEditable ? "BaseInput" : "BaseInfoDisplay";
-    },
     displayObjectFilter() {
       const tempCard = { ...this.currentCard[0] };
       if (!tempCard) {
@@ -94,16 +116,11 @@ export default {
           formatedDate = localizeDate(formatedDate, "en-Eu");
           tempCard[key] = formatedDate;
         }
-        // if (key === "picUrl") {
-        //   Object.defineProperty(tempCard, key, {
-        //     value: tempCard[key],
-        //     enumerable: false,
-        //     writable: true,
-        //     configurable: true
-        //   });
-        // }
       });
       return tempCard;
+    },
+    canSave() {
+      return this.editedContact ? false : true;
     }
   }
 };

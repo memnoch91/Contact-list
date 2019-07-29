@@ -12,8 +12,6 @@
         <nav class="nav-card is-mobile m-t-sm">
           <div class="button-wrapper are-normal">
             <button
-              @mouseenter="favoriteHover = true"
-              @mouseleave="favoriteHover = false"
               class="button is-success is-rounded is-outlined is-favorite m-l-sm m-r-sm"
               title="favorite"
             >
@@ -23,8 +21,6 @@
             </button>
             <button
               class="button is-danger  is-rounded is-outlined is-delete"
-              @mouseenter="deleteHover = true"
-              @mouseleave="deleteHover = false"
               title="delete"
               @click.stop.prevent="deleteMe"
             >
@@ -46,8 +42,7 @@ export default {
   },
   data() {
     return {
-      favoriteHover: false,
-      deleteHover: false
+      
     };
   },
   methods: {

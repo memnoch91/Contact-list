@@ -7,6 +7,7 @@
       name="contact-name"
       id="contact-name"
       v-model="value"
+      @blur="sendNewContactData"
     />
     <!-- <slot name="label"></slot>
     <slot>input here</slot>
@@ -17,48 +18,46 @@
 export default {
   name: "BaseInput",
   props: {
-    dbValue: String,
-    valueKey: String
+    valueKey: String,
+    dbValue: String
   },
   data() {
     return {
       hasValue: false,
       value: "",
-      label:""
+      label: ""
     };
   },
   created() {
     this.value = this.dbValue;
-    this.label = this.valueKey
+    this.label = this.valueKey;
   },
   methods: {
-    makeActive() {
-      const workingValue = this.value;
-      if (workingValue) {
-        return (this.hasValue = true);
+    sendNewContactData() {
+      const userInputNewValues = {
+        changedField: this.label,
+        newValue: this.value
+      };
+      if (this.value === this.dbValue) {
+        return "";
       }
-    },
-    makeInactive() {
-      const workingValue = this.value;
-      if (!workingValue) {
-        return (this.hasValue = false);
-      }
+      this.$emit("newContactData", userInputNewValues);
     }
   },
   watch: {
+    valueKey: function() {
+      this.label = this.valueKey;
+    },
     dbValue: function() {
       this.value = this.dbValue;
     },
-    valueKey: function() {
-      this.label = this.valueKey
-    },
     value: function() {
-      if(this.value) {
-        this.hasValue = true
+      if (this.value) {
+        this.hasValue = true;
       } else {
-        this.hasValue = false
+        this.hasValue = false;
       }
-    },
+    }
   }
 };
 </script>
