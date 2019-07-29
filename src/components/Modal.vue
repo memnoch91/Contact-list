@@ -7,7 +7,7 @@
     v-bind:aria-hidden="isOpen ? 'false' : 'true'"
   >
     <div class="modal-background" @click="closeModal"></div>
-    <div class="modal-content">
+    <form class="modal-content">
       <ul class="columns is-multiline is-marginless">
         <li class="column is-full flex-row-justify-center">
           <figure class="image is-128x128">
@@ -33,7 +33,7 @@
           >Save</button>
         </li>
       </ul>
-    </div>
+    </form>
     <button class="modal-close is-large" aria-label="close" @click="closeModal">x</button>
   </div>
 </template>
@@ -73,6 +73,9 @@ export default {
       this.editedContact = "";
     },
     receiveNewContactData(payload) {
+      if(!payload) {
+        return this.editedContact = ""
+      }
       const existingContact = { ...this.currentCard[0] };
       const editedField = payload.changedField;
       const editedValue = payload.newValue;

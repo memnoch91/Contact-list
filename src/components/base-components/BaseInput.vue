@@ -8,6 +8,7 @@
       id="contact-name"
       v-model="value"
       @blur="sendNewContactData"
+      @input="sendNewContactData"
     />
     <!-- <slot name="label"></slot>
     <slot>input here</slot>
@@ -34,12 +35,12 @@ export default {
   },
   methods: {
     sendNewContactData() {
-      const userInputNewValues = {
+      let userInputNewValues = {
         changedField: this.label,
         newValue: this.value
       };
       if (this.value === this.dbValue) {
-        return "";
+         userInputNewValues = "";
       }
       this.$emit("newContactData", userInputNewValues);
     }
