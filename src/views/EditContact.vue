@@ -1,6 +1,6 @@
 <template>
   <section class="m-b-lg">
-    <div class="container add-contact__wrapper">
+    <!-- <div class="container add-contact__wrapper">
       <h1 class="title m-t-sm m-b-sm">Add new contact</h1>
       <form v-on:submit.prevent="addContact">
         <div class="columns is-multiline is-marginless">
@@ -105,54 +105,24 @@
           </div>
         </div>
       </form>
-    </div>
+    </div> -->
   </section>
 </template>
 <script>
-import contacts from "../data/contacts";
-
 import { DB } from "../services/firebase";
 
 export default {
-  name: "AddContact",
+  name: "edit-contact",
   firestore: {
-    firebaseDB: DB.collection("contact-list")
+    contact: DB.collection("contact-list")
   },
   data() {
     return {
       firebaseDB: [],
-      cData: contacts,
-      newContact: {
-        age: "",
-        birthDate: "",
-        city: "",
-        country: "",
-        createdAt: "",
-        email: "",
-        name: "",
-        picUrl: "",
-        street: "",
-        streetNo: "",
-        tel: ""
-      },
-      uploadSucces: false,
-      uploadMessage: ""
     };
   },
   methods: {
-    addContact() {
-      this.setCreateAt();
-      DB.collection("contact-list")
-        .add(this.newContact)
-        .then(docRef => {
-          this.uploadMessage = "New contact registered";
-          console.log(docRef)
-        })
-        .then(() => {
-          this.resetForm();
-          this.uploadSucces = true;
-        })
-        .catch(err => console.error(err));
+    editContact() {
     },
     setCreateAt() {
       return (this.newContact.createdAt = new Date());

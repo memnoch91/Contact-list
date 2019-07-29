@@ -1,13 +1,13 @@
 <template>
   <section class="m-b-lg">
     <div class="contacts-list container">
-      <div class="columns is-multiline is-marginless">
+      <ul class="columns is-multiline is-marginless">
         <div class="c-c-c column is-full">
           <h1 class="list-title title">{{title}}</h1>
         </div>
         <div class="c-c-c column is-full">
           <input
-            type="text"
+            type="search"
             class="findContacts input m-t-sm m-b sm"
             id="searchContacts"
             placeholder="Search contacts..."
@@ -24,9 +24,13 @@
           @openCardDetails="openCardDetails"
         />
         <NoContacts v-if="noContactFound" key="NoContacts">No contact matching "{{searchInput}}"</NoContacts>
-      </div>
+      </ul>
     </div>
-    <Modal ref="modal" />
+    <Modal
+      :currentCard="receivedCard"
+      ref="modal"
+    />
+    <!-- :clickedCard="card[index]"  -->
   </section>
 </template>
 <script>
@@ -48,7 +52,8 @@ export default {
     return {
       firebaseDB: [],
       title: "Contact List",
-      searchInput: ""
+      searchInput: "",
+      receivedCard: []
     };
   },
   methods: {
@@ -57,9 +62,9 @@ export default {
         .doc(id)
         .delete();
     },
-    openCardDetails() {
+    openCardDetails(card) {
+      this.receivedCard = [...card ]  ;
       this.$refs.modal.openModal();
-      console.log(this.$refs);
     }
   },
   computed: {
@@ -94,7 +99,8 @@ shadows on cards { check }
   }
   max-width: 90%;
   height: 100%;
-  .c-c-c { //column-center-content
+  .c-c-c {
+    //column-center-content
     display: flex;
     justify-content: center;
     input::placeholder {
